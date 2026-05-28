@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>有一个问题想问你~</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 50%, #ffd4e8 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 漂浮的心形背景 */
+        .hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .heart {
+            position: absolute;
+            color: rgba(255, 182, 193, 0.4);
+            font-size: 20px;
+            animation: float 8s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* 主容器 */
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(255, 182, 193, 0.3);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 标题 */
+        .title {
+            font-size: 24px;
+            color: #ff6b9d;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* 问题文字 */
+        .question {
+            font-size: 20px;
+            color: #555;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .question .highlight {
+            color: #ff6b9d;
+            font-weight: 600;
+        }
+
+        /* 按钮容器 */
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            min-height: 60px;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8fb0 100%);
+            color: white;
+            box-shadow: 0 5px 20px rgba(255, 107, 157, 0.4);
+        }
+
+        .btn-yes:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 157, 0.5);
+        }
+
+        .btn-no {
+            background: #f0f0f0;
+            color: #999;
+            position: absolute;
+            transition: all 0.2s ease;
+        }
+
+        /* 成功页面 */
+        .success-page {
+            display: none;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .success-page.active {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .success-text {
+            font-size: 24px;
+            color: #ff6b9d;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .success-subtext {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* 烟花效果 */
+        .fireworks {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .firework {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            animation: explode 1s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(20);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 漂浮的心形背景 -->
+    <div class="hearts" id="hearts"></div>
+
+    <!-- 烟花容器 -->
+    <div class="fireworks" id="fireworks"></div>
+
+    <!-- 主页面 -->
+    <div class="container" id="mainPage">
+        <div class="title">💕 亲爱的老婆</div>
+        <div class="question">
+            今晚要不要一起去<br>
+            <span class="highlight">小区旁边的那家火锅店要不要去</span><br>
+            吃美味的<span class="highlight">火锅</span>呀？
+        </div>
+        <div class="buttons">
+            <button class="btn btn-yes" onclick="sayYes()">好呀！🥰</button>
+            <button class="btn btn-no" id="noBtn" onmouseover="runAway()" ontouchstart="runAway()">不要😤</button>
+        </div>
+    </div>
+
+    <!-- 成功页面 -->
+    <div class="container success-page" id="successPage">
+        <div class="success-icon">🎉</div>
+        <div class="success-text">太好啦！🥰</div>
+        <div class="success-subtext">
+            老婆的回复老公已经收到啦~<br>
+            今晚小区巷子火锅店见！<br>
+            一起去吃热乎乎的火锅吧！<br>
+            <span style="color: #ff6b9d; font-size: 24px;">🍲💖</span>
+        </div>
+    </div>
+
+    <script>
+        // 生成漂浮的心形
+        function createHearts() {
+            const heartsContainer = document.getElementById('hearts');
+            const heartSymbols = ['💕', '💖', '💗', '💓', '💝'];
+            
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 8 + 's';
+                heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                heartsContainer.appendChild(heart);
+            }
+        }
+
+        // "不要"按钮逃跑功能
+        function runAway() {
+            const noBtn = document.getElementById('noBtn');
+            const container = document.querySelector('.container');
+            const containerRect = container.getBoundingClientRect();
+            
+            // 计算按钮可以移动的范围（在容器内）
+            const maxX = containerRect.width - noBtn.offsetWidth - 40;
+            const maxY = containerRect.height - noBtn.offsetHeight - 100;
+            
+            // 随机位置
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY + 80; // 留出标题空间
+            
+            noBtn.style.position = 'absolute';
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+
+        // 点击"好呀"
+        function sayYes() {
+            // 隐藏主页面，显示成功页面
+            document.getElementById('mainPage').classList.add('hidden');
+            document.getElementById('successPage').classList.add('active');
+            
+            // 放烟花
+            createFireworks();
+        }
+
+        // 烟花效果
+        function createFireworks() {
+            const fireworksContainer = document.getElementById('fireworks');
+            const colors = ['#ff6b9d', '#ff8fb0', '#ffb6c1', '#ffd4e8', '#ff69b4', '#ff1493'];
+            
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const firework = document.createElement('div');
+                    firework.className = 'firework';
+                    firework.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    firework.style.left = Math.random() * 100 + '%';
+                    firework.style.top = Math.random() * 100 + '%';
+                    firework.style.boxShadow = `0 0 10px ${firework.style.background}`;
+                    fireworksContainer.appendChild(firework);
+                    
+                    setTimeout(() => firework.remove(), 1000);
+                }, i * 100);
+            }
+        }
+
+        // 初始化
+        createHearts();
+    </script>
+</body>
+</html>
